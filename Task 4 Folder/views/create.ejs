@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Create Blog | Sadana Blogs</title>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #eef2f3, #dfe9f3);
+            min-height: 100vh;
+        }
+
+        .form-container {
+            max-width: 600px;
+            margin: 60px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0px 15px 35px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+            color: #4a00e0 !important;
+        }
+
+        .form-control {
+            border-radius: 12px;
+            padding: 12px;
+            border: 1px solid #dee2e6;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            box-shadow: 0 0 0 0.25rem rgba(74, 0, 224, 0.1);
+            border-color: #4a00e0;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #4a00e0, #8e2de2);
+            border: none;
+            border-radius: 12px;
+            padding: 12px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(74, 0, 224, 0.3);
+        }
+
+        #titleHint {
+            font-size: 0.85rem;
+            transition: opacity 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+            <span class="navbar-brand">✨ Sadana Blogs</span>
+            <a href="/" class="btn btn-outline-primary btn-sm">← Back Home</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="form-container">
+            <h2 class="mb-4 text-center fw-bold">Create a New Blog ✍️</h2>
+
+            <% if (error) { %>
+                <div class="alert alert-danger text-center" role="alert">
+                    <%= error %>
+                </div>
+            <% } %>
+
+            <form action="/add" method="POST" id="blogForm">
+                
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">Blog Title</label>
+                    <input type="text" id="blogTitle" name="title" class="form-control" placeholder="What's on your mind?" autocomplete="off">
+                    <small id="titleHint" class="text-danger d-none">Title should be at least 5 characters long.</small>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">Content</label>
+                    <textarea id="blogContent" name="content" class="form-control" rows="6" placeholder="Tell your story..." maxlength="1200" required></textarea>
+<div class="text-end mt-2">
+    <small id="charCount" class="text-muted">0 / 1200 characters</small>
+</div>
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary">Publish Blog</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+   <script>
+    const contentArea = document.getElementById('blogContent');
+    const charDisplay = document.getElementById('charCount');
+    const titleInput = document.getElementById('blogTitle');
+    const titleHint = document.getElementById('titleHint');
+
+    // 1. UPDATED: Dynamic DOM Manipulation (Now with 1200 character limit)
+    contentArea.addEventListener('input', () => {
+        const currentLength = contentArea.value.length;
+        
+        // Update display to show / 1200
+        charDisplay.textContent = `${currentLength} / 1200 characters`;
+
+        // Style changes based on the new 1200 limit
+        if (currentLength >= 1100) {
+            charDisplay.className = 'text-danger fw-bold'; // Red when almost full
+        } else if (currentLength >= 600) {
+            charDisplay.className = 'text-warning fw-bold'; // Yellow at half-way
+        } else {
+            charDisplay.className = 'text-muted'; 
+        }
+    });
+
+    // 2. Suggest Capitalization (Helpful hint for Task 4 requirement)
+    titleInput.addEventListener('input', () => {
+        const val = titleInput.value;
+        if (val.length > 0 && val[0] !== val[0].toUpperCase()) {
+            titleHint.textContent = "Pro-tip: Titles look better capitalized! ✨";
+            titleHint.classList.remove('d-none');
+            titleHint.classList.add('text-primary'); 
+        } else {
+            titleHint.classList.add('d-none');
+        }
+    });
+
+    // 3. Simple Form Submission Check
+    document.getElementById('blogForm').onsubmit = function(e) {
+        if (titleInput.value.trim() === "" || contentArea.value.trim() === "") {
+            alert("Both Title and Content are required to post!");
+            e.preventDefault();
+        }
+    };
+</script>
+</body>
+
+</html>
